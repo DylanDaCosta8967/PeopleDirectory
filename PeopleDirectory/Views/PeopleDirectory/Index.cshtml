@@ -1,0 +1,149 @@
+﻿@model IEnumerable<PeopleDirectory.Models.PersonDirectoryModel>
+
+
+@{
+    ViewBag.Title = "Search";
+}
+
+@Html.AntiForgeryToken()
+
+@using (@Html.BeginForm())
+{
+
+    <form id="formsearch" method="post">
+        <div class="form-group">
+            <div class="col-md-1"><b>Search: </b></div>
+            @*  @Html.TextBox("SearchNameTerm", null, new { id = "SearchName" })*@
+            <div class="col-md-2"><input type="text" id="SearchName" name="SearchNameTerm" class="form-control" /></div>
+            <div class="col-md-1"><input type="Submit" id="SubmitSearch" value="Search" class="form-control" /></div>
+        </div>
+
+        <br />
+        <br />
+
+
+        <div class="container">
+
+            <div class="form-group">
+
+                <div class="col-md-10">
+                    @if (ViewBag.CountryId != null)
+                    {<b>Select Your Country: </b>
+                        @Html.DropDownList("CountrySelect", @ViewBag.CountryId as SelectList, "Select Country", htmlAttributes: new { @class = "form-control" })
+
+                    }
+                    <b>Select Your City: </b>
+                    @Html.DropDownList("CitySelect", @ViewBag.CityId as SelectList, "Select City", htmlAttributes: new { @class = "form-control" })
+                    <br />
+                </div>
+            </div>
+
+
+        </div>
+    </form>
+}
+
+<table class="table" id="TableMain">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.SurName)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SurName)
+            </td>
+
+            <td>
+                @Html.ActionLink("Details", "Details", new { id = item.ClientId })
+
+                @if (Session["UserId"] != null)
+                {
+
+                    @Html.ActionLink("Edit", "Edit", new { id = item.ClientId })
+
+
+                }
+                @if (Session["UserId"] != null)
+                {
+                    @Html.ActionLink("Delete", "Delete", new { id = item.ClientId })
+                }
+            </td>
+        </tr>
+    }
+</table>
+<hr />
+@if (Session["UserId"] != null)
+{
+    <div class="form-group">
+        <a href='@Url.Action("Create", "PeopleDirectory")'>
+            <input type="Submit" id="Create" value="Create New Person" class="form-control" />
+        </a>
+    </div>
+
+}
+
+<link href="~/Content/jquery-ui.css" rel="stylesheet" />
+<script src="~/Scripts/jquery-1.12.4.js"></script>
+<script src="~/Scripts/jquery-ui.js"></script>
+<script>
+
+
+    $(function () {
+        $("#SearchName").autocomplete({
+            source: '@Url.Action("IndexJ")'
+        });
+    });
+
+
+        $(document).ready(function ()
+        {
+            $("#CountrySelect").click(function ()
+            {
+
+                var countryId = parseInt($("#CountrySelect").val());
+                if (!isNaN(countryId))
+                {
+                    var ddCity = $("#CitySelect");
+                    ddCity.empty();
+                    ddCity.append($("<option></option>").val("Select City"));
+
+                    $.ajax(
+                        {
+                            url: "@Url.Action("GetCities", "PeopleDirectory")",
+                            type: "Get",
+                            data: {
+                                ClientCountryID: countryId
+                                  },
+                            dataType: "json",
+                            success: function (data)
+                            {
+                                $.each(data, function (i, val)
+                                {
+                                    ddCity.append(
+                                        $("<option></option>").val(val.CityId).html(val.CityName)
+                                    );
+                                });
+                            },
+                            error: function ()
+                            {
+                                alert("Error!");
+                            }
+                        });
+                }
+            });
+        });
+
+
+</script>

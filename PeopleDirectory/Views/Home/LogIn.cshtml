@@ -1,0 +1,43 @@
+﻿@model PeopleDirectory.Models.Users
+
+@{
+    ViewBag.Title = "Login";
+}
+<h2>@ViewBag.Title.</h2>
+<h3>@ViewBag.Message</h3>
+
+<dic>
+    @using (Html.BeginForm("Login", "Home", FormMethod.Post))
+    {
+    <table>
+        <tr>
+            <td>@Html.LabelFor(model => model.UserName)</td>
+        </tr>
+        <tr>
+            <td>@Html.EditorFor(model => model.UserName, new { htmlAttributes = new { @class = "form-control" } })</td>
+        </tr>
+        <tr>
+            <td>@Html.LabelFor(model => model.Password)</td>
+        </tr>
+        <tr>
+            <td>@Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control" } })</td>
+        </tr>
+        <tr>
+            <td><hr></td>
+        </tr>
+        <tr>
+
+            <td>
+                <input type="submit" name="name" value="Login" class="form-control" />
+            </td>
+            <td>&nbsp &nbsp </td>
+            <td>
+                <input type="reset" name="name" value="Clear" class="form-control" />
+            </td>
+
+        </tr>
+    </table>
+    }
+
+</dic>
+
